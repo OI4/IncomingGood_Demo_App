@@ -1,24 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { AasViewer } from './AasViewer';
 
 function App() {
-  return (
+    
+    function loadAsset() {
+        // TODO load from Discovery, Registry, Repos
+        return undefined;
+    }
+
+    return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h3>Search for your Asset</h3>
+      <p>Asset Id:</p>
+      <input id="assetIdInput"/>
+      <button onClick={loadAsset()}>Search</button>
+        <div>
+            <AasViewer></AasViewer>
+        </div>
     </div>
   );
 }
