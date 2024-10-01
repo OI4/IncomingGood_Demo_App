@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { AasViewer } from './AasViewer';
+import { Box, Button, TextField } from '@mui/material';
 
 function App() {
     
@@ -11,13 +12,16 @@ function App() {
 
     return (
     <div className="App">
-      <h3>Search for your Asset</h3>
-      <p>Asset Id:</p>
-      <input id="assetIdInput"/>
-      <button onClick={loadAsset()}>Search</button>
-        <div>
-            <AasViewer></AasViewer>
-        </div>
+        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+            <h3>Search for your Asset</h3>
+            <Box display="flex" flexDirection="row">
+                <TextField id="assetIdInput" label="Asset ID" variant="outlined" />
+                <Button variant="contained">Contained</Button>
+            </Box>
+            <Box>
+                <AasViewer></AasViewer>
+            </Box>
+        </Box>
     </div>
   );
 }
