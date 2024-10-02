@@ -55,6 +55,7 @@ enum SecurtiyTypeEnum {
 export interface AASAndSubmodels {
     assetAdministrationShell: {
         shell: AssetAdministrationShell | null
+        thumbnail: string | null
         url: string | null
     } | null
     nameplate: {
