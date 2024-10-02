@@ -39,15 +39,16 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
             <Box display="flex" padding={5}>
                 <Box width="250px" height="100px" mr={5}>
                     {props.aasData.assetAdministrationShell?.thumbnail && <img width="250px" src={props.aasData.assetAdministrationShell?.thumbnail}/>}
-                <Box>
+                <Box display="flex" flexDirection="column">
+                    {props.aasData.assetAdministrationShell?.shell?.assetInformation?.specificAssetIds && <p>Specific Asset IDs</p>}
                     {props.aasData.assetAdministrationShell?.shell?.assetInformation?.specificAssetIds?.map(id => {
-                        return <p>{id.name} : {id.value}</p>
+                        return <h4>{id.name} : {id.value}</h4>
                     })}
                 </Box>
                 </Box>
-                <Box display="flex" flexDirection="column">
-                    <p>Supplier: {getNameplateProperty('ManufacturerName')}</p>
-                    <p>Asset: {getNameplateProperty('ManufacturerProductDesignation')}</p>
+                <Box display="flex" flexDirection="column" alignItems="flex-start">
+                    <h4>Supplier: {getNameplateProperty('ManufacturerName')}</h4>
+                    <h4>Asset: {getNameplateProperty('ManufacturerProductDesignation')}</h4>
                     <Box display="flex" flexDirection="column">
                         <form onSubmit={(event) => {
                             saveAas(event)
