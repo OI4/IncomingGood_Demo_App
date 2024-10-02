@@ -39,6 +39,11 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
             <Box display="flex" padding={5}>
                 <Box width="250px" height="100px" mr={5}>
                     {props.aasData.assetAdministrationShell?.thumbnail && <img width="250px" src={props.aasData.assetAdministrationShell?.thumbnail}/>}
+                <Box>
+                    {props.aasData.assetAdministrationShell?.shell?.assetInformation?.specificAssetIds?.map(id => {
+                        return <p>{id.name} : {id.value}</p>
+                    })}
+                </Box>
                 </Box>
                 <Box display="flex" flexDirection="column">
                     <p>Supplier: {getNameplateProperty('ManufacturerName')}</p>
