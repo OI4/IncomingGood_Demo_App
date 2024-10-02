@@ -199,4 +199,19 @@ export class RepositoryServiceClient {
     }
     throw new Error("No endpoints found");
   }
+  
+  async updateSubmodelElement(repositoryEndpoint: string, idShortPath: string, inputValue: string | number) {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'ApiKey': 'A5Z2w$@S%>0M',
+      'Accept': '*/*'
+    }
+    const method = 'PATCH'
+
+    return fetch(repositoryEndpoint + '/submodel-elements/' + idShortPath + '/$value', {
+      method,
+      headers,
+      body: JSON.stringify(String(inputValue))
+    })
+  }
 }
