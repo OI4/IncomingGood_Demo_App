@@ -1,4 +1,4 @@
-import { Box, Button, Card, TextField } from "@mui/material";
+import { Box, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import React, { useState } from 'react';
 
 export function AasViewer(props: {}) {
@@ -10,6 +10,8 @@ export function AasViewer(props: {}) {
         console.log("save")
     }
     
+    const colors = ["Red", "Black", "White", "Green", "Blue"]
+    
     return (
         <Card>
             <Box display="flex" padding={5}>
@@ -20,7 +22,19 @@ export function AasViewer(props: {}) {
                     <Box display="flex" flexDirection="column">
                         <form onSubmit={() => {saveAas()}}>
                             <Box mb={2}>
-                                <TextField label="Color" onChange={(e) => setColor(e.target.value)}></TextField>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Color</InputLabel>
+                                    <Select
+                                        id="demo-simple-select"
+                                        value={color}
+                                        label="Color"
+                                        onChange={(e) => setColor(e.target.value)}
+                                    >
+                                        {colors.map(color => {
+                                          return <MenuItem value={color}>{color}</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
                             </Box>
                             <Box mb={2}>
                                 <TextField label="Weight" type="number" onChange={(e) => setWeight(Number(e.target.value))}></TextField>
@@ -28,7 +42,7 @@ export function AasViewer(props: {}) {
                             <Box mb={2}>
                                 <TextField label="Material" onChange={(e) => setMaterial(e.target.value)}></TextField>
                             </Box>
-                            <Button variant="contained" type="submit">Save</Button>
+                            <Button variant="contained" type="submit" className="button">Save</Button>
                         </form>
                     </Box>
                 </Box>

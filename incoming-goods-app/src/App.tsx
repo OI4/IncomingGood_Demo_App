@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { AasViewer } from './AasViewer';
-import { Box, Button, createTheme, TextField, ThemeProvider } from '@mui/material';
+import { Box, Button, CircularProgress, createTheme, TextField, ThemeProvider } from '@mui/material';
 import { AssetAdministrationShell } from '@aas-core-works/aas-core3.0-typescript/dist/types/types';
 import { DiscoveryService } from './Services/DiscoveryService';
 import logo from './OI4Logo.png'
@@ -9,7 +9,7 @@ import logo from './OI4Logo.png'
 function App() {
     const [assetId, setAssetId] = useState("")
     const [aas, setAas] = useState<AssetAdministrationShell>()
-
+    const [isLoading, setIsLoading] = useState(false)
 
     async function loadAsset() {
         const discoveryService = DiscoveryService.create("https://oi4-sps24-mnestix-api.azurewebsites.net/discovery");
@@ -40,12 +40,21 @@ function App() {
                         <TextField id="assetIdInput" label="Asset ID" variant="outlined"
                                    onChange={(e) => setAssetId(e.target.value)}/>
                     </Box>
-                    <Button onClick={() => {
-                        loadAsset()
-                    }} variant="contained">Contained</Button>
+                    <Button
+                        className="button"
+                        onClick={() => {
+                            loadAsset()
+                        }}
+                        onKeyDown={(ev) => {
+                            if (ev.key === 'Enter') {
+                                loadAsset()
+                            }}
+                        }
+                        variant="contained">Load</Button>
                 </Box>
                 <Box mt={5}>
-                    <AasViewer></AasViewer>
+                    {isLoading && <CircularProgress />}
+                    {!isLoading && <AasViewer></AasViewer>}
                 </Box>
             </Box>
         </div>
