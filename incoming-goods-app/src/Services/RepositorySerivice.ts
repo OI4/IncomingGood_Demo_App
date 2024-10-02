@@ -21,7 +21,8 @@ export class RepositoryService {
     }
 
     async getAasandSubomdelsFromRepository(
-        assetAdministrationShellDescriptor: AssetAdministrationShellDescriptor | null
+        assetAdministrationShellDescriptor: AssetAdministrationShellDescriptor | null,
+        submodelDescriptors: Array<SubmodelDescriptor> | null
     ): Promise<AASAndSubmodels | null | undefined> {
         try {
             if (!assetAdministrationShellDescriptor) {
@@ -50,7 +51,7 @@ export class RepositoryService {
                 await this.repositoryServiceClient.getAasThumbnailByAasUrl(aasUrl);
 
             const nameplateDescriptor: SubmodelDescriptor | null =
-                assetAdministrationShellDescriptor.submodelDescriptors?.find(
+                submodelDescriptors?.find(
                     (smd) => smd.idShort === "Nameplate"
                 ) || null;
             if (!nameplateDescriptor) {
@@ -68,7 +69,7 @@ export class RepositoryService {
             }
 
             const technicalDataDescriptor: SubmodelDescriptor | null =
-                assetAdministrationShellDescriptor.submodelDescriptors?.find(
+                submodelDescriptors?.find(
                     (smd) => smd.idShort === "TechnicalData"
                 ) || null;
             if (!technicalDataDescriptor) {

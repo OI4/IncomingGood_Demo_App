@@ -66,8 +66,10 @@ function App() {
             console.log("SM Descriptors: " + JSON.stringify(smDescriptors));
 
 
-            const aasAndShells = await repositoryService.getAasandSubomdelsFromRepository(aasDescriptor)
+            const aasAndShells = await repositoryService.getAasandSubomdelsFromRepository(aasDescriptor, smDescriptors)
             if (aasAndShells) {
+              console.log('aasAndShells')
+              console.log(aasAndShells)
                 setAas(aasAndShells)
                 setIsLoading(false)
             }
