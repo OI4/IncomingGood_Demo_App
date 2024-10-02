@@ -5,6 +5,7 @@ import { Box, Button, CircularProgress, createTheme, TextField, ThemeProvider } 
 import { AssetAdministrationShell } from '@aas-core-works/aas-core3.0-typescript/dist/types/types';
 import { DiscoveryService } from './Services/DiscoveryService';
 import logo from './OI4Logo.png'
+import { Footer } from './Footer';
 
 function App() {
     const [assetId, setAssetId] = useState("")
@@ -56,6 +57,9 @@ function App() {
                     {isLoading && <CircularProgress />}
                     {!isLoading && <AasViewer></AasViewer>}
                 </Box>
+            </Box>
+            <Box mt={5}>
+                <Footer/>
             </Box>
         </div>
         </ThemeProvider>
