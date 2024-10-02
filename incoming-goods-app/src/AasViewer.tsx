@@ -4,18 +4,17 @@ import { AASAndSubmodels } from './interfaces';
 import { RepositoryServiceClient } from './Services/RepositorySerivice';
 
 export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
-    const [color, setColor] = useState("")
-    const [weight, setWeight] = useState(0)
-    const [material, setMaterial] = useState("")
+    const [color, setColor] = useState(getTechnicalProperty("color"))
+    const [weight, setWeight] = useState(Number(getTechnicalProperty("weight")))
+    const [material, setMaterial] = useState(getTechnicalProperty("material"))
     const repositoryClient = new RepositoryServiceClient();
 
     const repositoryEndpoint = props?.aasData?.assetAdministrationShell?.url ?? '';
     const technicalDataShortId = 'TechnicalProperties';
-    const nameplateDataShortId = 'NameplateProperties';
     
     function getTechnicalProperty(name: string) {
         const technicalData = (props.aasData.technicalData?.submodel?.submodelElements?.find( (x: any) => x.idShort === technicalDataShortId) as any)?.[0]
-        return technicalData.find((x: any) => x.idShort === name)?.value as string ?? ''
+        return technicalData?.find((x: any) => x.idShort === name)?.value as string ?? ''
     }
 
     function getNameplateProperty(name: string) {
@@ -23,10 +22,6 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
         return nameplateData?.find((x: any) => x.idShort === name)?.value as string ?? ''
     }
     
-     setColor(getTechnicalProperty("color"))
-     setWeight(Number(getTechnicalProperty("weight")))
-     setMaterial(getTechnicalProperty("material"))
-
     async function saveAas(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -42,10 +37,12 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
     return (
         <Card>
             <Box display="flex" padding={5}>
-                <Box width="100px" height="100px" border="3px solid grey" mr={5}>Image</Box>
+                <Box width="250px" height="100px" mr={5}>
+                    {props.aasData.assetAdministrationShell?.thumbnail && <img width="250px" src={props.aasData.assetAdministrationShell?.thumbnail}/>}
+                </Box>
                 <Box display="flex" flexDirection="column">
                     <p>Supplier: {getNameplateProperty('ManufacturerName')}</p>
-                    <p>Asset : {getNameplateProperty('ManufacturerProductDesignation')}</p>
+                    <p>Asset: {getNameplateProperty('ManufacturerProductDesignation')}</p>
                     <Box display="flex" flexDirection="column">
                         <form onSubmit={(event) => {
                             saveAas(event)

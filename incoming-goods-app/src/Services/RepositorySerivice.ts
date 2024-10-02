@@ -21,7 +21,7 @@ export class RepositoryService {
 
   async getAasandSubomdelsFromRepository(
     assetAdministrationShellDescriptor: AssetAdministrationShellDescriptor | null
-  ): Promise<AASAndSubmodels | null> {
+  ): Promise<AASAndSubmodels | null | undefined> {
     try {
       if (!assetAdministrationShellDescriptor) {
         throw new Error();
@@ -53,20 +53,17 @@ export class RepositoryService {
           (smd) => smd.idShort === "Nameplate"
         ) || null;
       if (!nameplateDescriptor) {
-        throw new Error(
-          "AssetAdministratoinShellDescriptor contained no SubmodelDescriptor for Nameplate"
-        );
+        console.warn("No Nameplate Data")
+
       }
       const nameplateUrl: string | null =
         this.repositoryServiceClient.getUrlFromEndpoints(
-          nameplateDescriptor.endpoints
+          nameplateDescriptor?.endpoints
         );
       const nameplate: Submodel | null =
         await this.repositoryServiceClient.getSmByUrl(nameplateUrl);
       if (!nameplate) {
-        throw new Error(
-          "Nameplate not found at the endpoint specified by its descriptor"
-        );
+        console.warn("No Nameplate Data")
       }
 
       const technicalDataDescriptor: SubmodelDescriptor | null =
@@ -74,20 +71,16 @@ export class RepositoryService {
           (smd) => smd.idShort === "TechnicalData"
         ) || null;
       if (!technicalDataDescriptor) {
-        throw new Error(
-          "AssetAdministratoinShellDescriptor contained no SubmodelDescriptor for Technical Data"
-        );
+        console.warn("No Technical Data")
       }
       const technicalDataUrl: string | null =
         this.repositoryServiceClient.getUrlFromEndpoints(
-          technicalDataDescriptor.endpoints
+          technicalDataDescriptor?.endpoints
         );
       const technicalData: Submodel | null =
         await this.repositoryServiceClient.getSmByUrl(technicalDataUrl);
       if (!technicalData) {
-        throw new Error(
-          "Technical Data not found at the endpoint specified by its descriptor"
-        );
+        console.warn("No Technical Data")
       }
 
       return {
@@ -107,7 +100,7 @@ export class RepositoryService {
       };
     } catch (e) {
       console.warn(e);
-      throw(e);
+      //throw(e);
     }
   }
 }
@@ -197,7 +190,8 @@ export class RepositoryServiceClient {
         return url;
       }
     }
-    throw new Error("No endpoints found");
+    console.warn("No endpoints found");
+    return null;
   }
   
   async updateSubmodelElement(repositoryEndpoint: string, idShortPath: string, inputValue: string | number) {
