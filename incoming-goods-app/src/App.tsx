@@ -4,11 +4,12 @@ import { AasViewer } from './AasViewer';
 import { Alert, Box, Button, CircularProgress, createTheme, TextField, ThemeProvider } from '@mui/material';
 import { DiscoveryService } from './Services/DiscoveryService';
 import { AasRegistry } from './Services/AasRegistry';
+import { getUrlFromEndpoints, RepositoryService } from './Services/RepositorySerivice';
 
 import logo from './OI4Logo.png'
 import { Footer } from './Footer';
-import { AASAndSubmodels } from './interfaces';
-import { RepositoryService } from './Services/RepositorySerivice';
+import { AASAndSubmodels, SubmodelDescriptor } from './interfaces';
+import { SubmodelRegistry } from './Services/SubmodelRegistry';
 
 function App() {
     const [assetId, setAssetId] = useState("")
@@ -31,12 +32,40 @@ function App() {
             const concernedAasId = aasId[0];
             const aasDescriptor = await aasRegistry.getAasDescriptorFromRegistry(concernedAasId);
 
-
             if (!aasDescriptor) {
                 throw new Error("AAS descriptor was not found");
             }
 
             const repositoryService = RepositoryService.create()
+
+            const url = getUrlFromEndpoints(aasDescriptor.endpoints);
+
+            console.log("URL: " + url);
+
+            const smRefs = await repositoryService.getSubmodelRefsByAasUrl(url);
+
+            console.log("smRefs: " + smRefs);
+
+            const smIds = smRefs?.map(ref=>ref.keys[0].value)
+
+            if (!smIds?.length) {
+                throw new Error("no SM was not found for the AAS");
+            }
+
+            const smRegistry = SubmodelRegistry.create("https://mnestix-basyx-submodel-registry-b36325a9.azurewebsites.net");
+
+            const smDescriptors = (await Promise.all(smIds?.map(smId => {
+                const smDescriptor = smRegistry.getSmDescriptorFromRegistry(smId)
+
+                if (!smDescriptor) {
+                    throw new Error("SM descriptor was not found");
+                }
+                return smDescriptor;
+            }))) as Array<SubmodelDescriptor>
+
+            console.log("SM Descriptors: " + JSON.stringify(smDescriptors));
+
+
             const aasAndShells = await repositoryService.getAasandSubomdelsFromRepository(aasDescriptor)
             if (aasAndShells) {
                 setAas(aasAndShells)
@@ -46,7 +75,8 @@ function App() {
             console.log("Error while loading the AAS " + error)
             setErrorMessage("Error while loading the AAS")
             setIsLoading(false)
-        }
+        }        
+
     }
 
     const theme = createTheme({
