@@ -15,7 +15,6 @@ function App() {
     const [aas, setAas] = useState<AASAndSubmodels>()
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
-    
     async function loadAsset() {
         setErrorMessage("")
         setIsLoading(true)
@@ -71,24 +70,25 @@ function App() {
                 <Box display="flex" flexDirection="row">
                     <Box mr={2}>
                         <TextField id="assetIdInput" label="Asset ID" variant="outlined"
-                            onChange={(e) => setAssetId(e.target.value)} />
+                            onChange={(e) => setAssetId(e.target.value)}                         
+                            onKeyDown={(ev) => {
+                            if (ev.key === 'Enter') {
+                                loadAsset()
+                            }}
+                        }/>
                     </Box>
                     <Button
                         className="button"
                         onClick={() => {
                             loadAsset()
                         }}
-                        onKeyDown={(ev) => {
-                            if (ev.key === 'Enter') {
-                                loadAsset()
-                            }}
-                        }
+                        disabled={!assetId}
                         variant="contained">Load</Button>
                 </Box>
                 <Box mt={5}>
                     {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
                     {isLoading && <CircularProgress />}
-                    {(!isLoading && aas) && <AasViewer aasData={ aas}></AasViewer>}
+                    {(!isLoading && aas) && <AasViewer aasData={aas}></AasViewer>}
                 </Box>
             </Box>
             <Box mt={5} position="absolute" bottom="50px" width="100%">
