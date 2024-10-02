@@ -38,7 +38,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
         <Card>
             <Box display="flex" padding={5}>
                 <Box width="250px" height="100px" mr={5}>
-                    {props.aasData.assetAdministrationShell?.thumbnail && <img width="250px" src={props.aasData.assetAdministrationShell?.thumbnail}/>}
+                    {props.aasData.assetAdministrationShell?.thumbnail && <img className="thumbnail" src={props.aasData.assetAdministrationShell?.thumbnail}/>}
                 <Box display="flex" flexDirection="column">
                     {props.aasData.assetAdministrationShell?.shell?.assetInformation?.specificAssetIds && <p>Specific Asset IDs</p>}
                     {props.aasData.assetAdministrationShell?.shell?.assetInformation?.specificAssetIds?.map(id => {

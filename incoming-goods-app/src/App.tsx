@@ -63,14 +63,15 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <div className="App">
-                <Box sx={{ flexGrow: 1 }} mt={5}>
+                <Box mt={5} >
                     <img width="300px" src={logo}/>
                 </Box>
                 <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" mt={5}>
                     <h3>Search for your Asset</h3>
-                    <Box display="flex" flexDirection="row">
-                        <Box mr={2}>
-                            <TextField id="assetIdInput" label="Asset ID" variant="outlined"
+                    <Box display="flex" flexDirection="row" minWidth="600px">
+                        <Box mr={2} width="100%">
+                            <TextField id="assetIdInput" label="Asset ID" variant="outlined" className="searchInput"
+                                       fullWidth={true}
                                        onChange={(e) => setAssetId(e.target.value)}
                                        onKeyDown={(ev) => {
                                            if (ev.key === 'Enter') {
