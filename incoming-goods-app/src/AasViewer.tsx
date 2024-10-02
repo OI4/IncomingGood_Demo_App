@@ -1,7 +1,8 @@
 import { Box, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import React, { useState } from 'react';
+import { AASAndSubmodels } from './interfaces';
 
-export function AasViewer(props: {}) {
+export function AasViewer(props: {aasData: AASAndSubmodels}) {
     const [color, setColor] = useState("")
     const [weight, setWeight] = useState(0)
     const [material, setMaterial] = useState("")
