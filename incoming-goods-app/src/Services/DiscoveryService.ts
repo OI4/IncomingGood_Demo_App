@@ -15,7 +15,7 @@ export class DiscoveryService {
             if (!searchAssetId) {
                 throw new Error();
             }
-            const aasIds = (await this.discoveryServiceClient.getAasIdsByAssetId(searchAssetId)).result;
+            const aasIds = (await this.discoveryServiceClient.getAasIdsByAssetId(searchAssetId.trim())).result;
 
             if (aasIds.length === 0) {
                 throw new Error();
