@@ -140,7 +140,7 @@ export class RepositoryServiceClient {
 
   async getAasThumbnailByAasUrl(aasUrl: string): Promise<string | null> {
     const headers: Record<string, string> = {
-      Accept: "image/*",
+      Accept: "*/*",
       "Content-Type": "application/json",
     };
     const method = "GET";
