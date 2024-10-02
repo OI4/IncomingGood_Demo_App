@@ -13,13 +13,14 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
     const technicalDataShortId = 'TechnicalProperties';
     
     function getTechnicalProperty(name: string) {
-        const technicalData = (props.aasData.technicalData?.submodel?.submodelElements?.find( (x: any) => x.idShort === technicalDataShortId) as any)?.[0]
+        const technicalData = (props.aasData.technicalData?.submodel?.submodelElements?.find( (x: any) => x.idShort === "TechnicalProperties") as any)?.[0]
         return technicalData?.find((x: any) => x.idShort === name)?.value as string ?? ''
     }
 
     function getNameplateProperty(name: string) {
         const nameplateData = (props.aasData.nameplate?.submodel?.submodelElements as any)
-        return nameplateData?.find((x: any) => x.idShort === name)?.value as string ?? ''
+        const mlp = nameplateData?.find((x: any) => x.idShort === name)?.value
+        return mlp[0].text;
     }
     
     async function saveAas(event: React.FormEvent<HTMLFormElement>) {
