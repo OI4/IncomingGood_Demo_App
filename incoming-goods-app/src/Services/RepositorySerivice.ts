@@ -107,7 +107,7 @@ export class RepositoryService {
       };
     } catch (e) {
       console.warn(e);
-      return null;
+      throw(e);
     }
   }
 }
