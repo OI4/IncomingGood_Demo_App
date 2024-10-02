@@ -15,7 +15,7 @@ function App() {
     const [aas, setAas] = useState<AASAndSubmodels>()
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
-    
+
     async function loadAsset() {
         setErrorMessage("")
         setIsLoading(true)
@@ -38,7 +38,7 @@ function App() {
 
             const repositoryService = RepositoryService.create()
             const aasAndShells = await repositoryService.getAasandSubomdelsFromRepository(aasDescriptor)
-            if(aasAndShells) {
+            if (aasAndShells) {
                 setAas(aasAndShells)
                 setIsLoading(false)
             }
@@ -52,49 +52,51 @@ function App() {
     const theme = createTheme({
         palette: {
             primary: {
-                main: '#76B82A',
+                main: '#76B82A'
             },
             secondary: {
-                main: '#757B7F',
-            },
-        },
+                main: '#757B7F'
+            }
+        }
     });
 
     return (
         <ThemeProvider theme={theme}>
-        <div className="App">
-            <Box sx={{ flexGrow: 1 }} mt={5}>
-                <img width="300px" src={logo}/>
-            </Box>
-            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" mt={5}>
-                <h3>Search for your Asset</h3>
-                <Box display="flex" flexDirection="row">
-                    <Box mr={2}>
-                        <TextField id="assetIdInput" label="Asset ID" variant="outlined"
-                            onChange={(e) => setAssetId(e.target.value)} />
-                    </Box>
-                    <Button
-                        className="button"
-                        onClick={() => {
-                            loadAsset()
-                        }}
-                        onKeyDown={(ev) => {
-                            if (ev.key === 'Enter') {
+            <div className="App">
+                <Box sx={{ flexGrow: 1 }} mt={5}>
+                    <img width="300px" src={logo}/>
+                </Box>
+                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" mt={5}>
+                    <h3>Search for your Asset</h3>
+                    <Box display="flex" flexDirection="row">
+                        <Box mr={2}>
+                            <TextField id="assetIdInput" label="Asset ID" variant="outlined"
+                                       onChange={(e) => setAssetId(e.target.value)}
+                                       onKeyDown={(ev) => {
+                                           if (ev.key === 'Enter') {
+                                               loadAsset()
+                                           }
+                                       }
+                                       }/>
+                        </Box>
+                        <Button
+                            className="button"
+                            onClick={() => {
                                 loadAsset()
                             }}
-                        }
-                        variant="contained">Load</Button>
+                            disabled={!assetId}
+                            variant="contained">Load</Button>
+                    </Box>
+                    <Box mt={5}>
+                        {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
+                        {isLoading && <CircularProgress/>}
+                        {(!isLoading && aas) && <AasViewer aasData={aas}></AasViewer>}
+                    </Box>
                 </Box>
-                <Box mt={5}>
-                    {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
-                    {isLoading && <CircularProgress />}
-                    {(!isLoading && aas) && <AasViewer aasData={ aas}></AasViewer>}
+                <Box mt={5} position="absolute" bottom="50px" width="100%">
+                    <Footer/>
                 </Box>
-            </Box>
-            <Box mt={5} position="absolute" bottom="50px" width="100%">
-                <Footer/>
-            </Box>
-        </div>
+            </div>
         </ThemeProvider>
     );
 }
