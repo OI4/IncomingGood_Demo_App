@@ -8,6 +8,7 @@ import { AasRegistry } from './Services/AasRegistry';
 
 import logo from './OI4Logo.png'
 import { Footer } from './Footer';
+import { RepositoryService } from './Services/RepositorySerivice';
 
 function App() {
     const [assetId, setAssetId] = useState("")
@@ -26,9 +27,13 @@ function App() {
         const concernedAasId = aasId[0];
         const aasDescriptor = await aasRegistry.getAasDescriptorFromRegistry(concernedAasId);
 
-        console.log("AAS Descriptor: " + JSON.stringify(aasDescriptor));
 
+        if (!aasDescriptor) {
+          throw new Error("AAS descriptor was not found");
+      }
 
+        const repositoryService = RepositoryService.create()
+        const aasAndShells = await repositoryService.getAasandSubomdelsFromRepository(aasDescriptor)
     }
 
     const theme = createTheme({

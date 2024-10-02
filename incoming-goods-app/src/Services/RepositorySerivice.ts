@@ -18,10 +18,16 @@ export class RepositoryService {
             }
 
             const aasUrl: string|null = this.repositoryServiceClient.getUrlFromEndpoints(assetAdministrationShellDescriptor.endpoints)
+if(!aasUrl){
+    throw new Error('AssetAdministratoinShell descriptor contains no endpoints');
+}
+
             const aas: AssetAdministrationShell | null = (await this.repositoryServiceClient.getAasByUrl(aasUrl));
             if (!aas) {
                 throw new Error('AssetAdministratoinShell not found at the endpoint specified by its descriptor');
             }
+
+            const thumbailUrl: string | null = (await this.repositoryServiceClient.getAasThumbnailByAasUrl(aasUrl))
 
             const nameplateDescriptor: SubmodelDescriptor | null = assetAdministrationShellDescriptor.submodelDescriptors?.find(smd=>smd.idShort === 'Nameplate') || null
             if (!nameplateDescriptor) {
@@ -47,6 +53,7 @@ export class RepositoryService {
             return {
                 assetAdministrationShell: {
                     shell: aas,
+                    thumbnail: thumbailUrl,
                     url: aasUrl
                 },
                 nameplate: {
@@ -70,7 +77,6 @@ export class RepositoryServiceClient {
     async getAasByUrl( url: string | null): Promise<AssetAdministrationShell | null> {
         const headers: Record<string, string> = {
             Accept: 'application/json',
-            'Content-Type': 'application/json'
         }
         const method = 'GET'
         if(url) {
@@ -84,13 +90,30 @@ export class RepositoryServiceClient {
             return Promise.resolve(null)
         }
     }
-    
-    
+
+    async getAasThumbnailByAasUrl(aasUrl: string): Promise<string | null> {
+        const headers: Record<string, string> = {
+            Accept: 'image/*',
+            'Content-Type': 'application/json'
+        }
+        const method = 'GET'
+        if(aasUrl) {
+            const url = (aasUrl.endsWith('/')?(aasUrl):(aasUrl+'/'))+'asset-information/thumbail'
+            const response = await fetch(url, {method, headers})
+            if (response.ok) {
+                const thumbailData =  await response.blob()
+                const thumbailObjectUrl = URL.createObjectURL(thumbailData)
+                return thumbailObjectUrl
+            } else {
+                return Promise.resolve(null)}
+        } else {
+            return Promise.resolve(null)
+        }
+    }
         
     async getSmByUrl( url: string | null): Promise<Submodel | null> {
         const headers: Record<string, string> = {
             Accept: 'application/json',
-            'Content-Type': 'application/json'
         }
         const method = 'GET'
         if(url) {
