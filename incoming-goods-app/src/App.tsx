@@ -5,6 +5,7 @@ import { Box, Button, CircularProgress, createTheme, TextField, ThemeProvider } 
 import { AssetAdministrationShell } from '@aas-core-works/aas-core3.0-typescript/dist/types/types';
 import { DiscoveryService } from './Services/DiscoveryService';
 import { AasRegistry } from './Services/AasRegistry';
+import { getUrlFromEndpoints, RepositoryService } from './Services/RepositorySerivice';
 
 import logo from './OI4Logo.png'
 import { Footer } from './Footer';
@@ -27,6 +28,14 @@ function App() {
         const aasDescriptor = await aasRegistry.getAasDescriptorFromRegistry(concernedAasId);
 
         console.log("AAS Descriptor: " + JSON.stringify(aasDescriptor));
+
+        const specificAasUrl = getUrlFromEndpoints(aasDescriptor?.endpoints);
+
+        
+
+
+
+
 
 
     }

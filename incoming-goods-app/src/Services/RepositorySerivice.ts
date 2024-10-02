@@ -1,5 +1,5 @@
 import { AASAndSubmodels, AssetAdministrationShellDescriptor, Endpoint, SubmodelDescriptor } from '../interfaces';
-import { AssetAdministrationShell, Submodel } from '@aas-core-works/aas-core3.0-typescript/types';
+import { AssetAdministrationShell, Submodel, Reference } from '@aas-core-works/aas-core3.0-typescript/types';
 
 export class RepositoryService {
     private constructor(
@@ -17,7 +17,7 @@ export class RepositoryService {
                 throw new Error();
             }
 
-            const aasUrl: string|null = this.repositoryServiceClient.getUrlFromEndpoints(assetAdministrationShellDescriptor.endpoints)
+            const aasUrl: string|null = getUrlFromEndpoints(assetAdministrationShellDescriptor.endpoints)
             const aas: AssetAdministrationShell | null = (await this.repositoryServiceClient.getAasByUrl(aasUrl));
             if (!aas) {
                 throw new Error('AssetAdministratoinShell not found at the endpoint specified by its descriptor');
@@ -27,7 +27,7 @@ export class RepositoryService {
             if (!nameplateDescriptor) {
                 throw new Error('AssetAdministratoinShellDescriptor contained no SubmodelDescriptor for Nameplate')
             }
-            const nameplateUrl: string|null = this.repositoryServiceClient.getUrlFromEndpoints(nameplateDescriptor.endpoints)
+            const nameplateUrl: string|null = getUrlFromEndpoints(nameplateDescriptor.endpoints)
             const nameplate: Submodel | null = (await  this.repositoryServiceClient.getSmByUrl(nameplateUrl))
             if (!nameplate) {
                 throw new Error('Nameplate not found at the endpoint specified by its descriptor');
@@ -37,7 +37,7 @@ export class RepositoryService {
             if (!technicalDataDescriptor) {
                 throw new Error('AssetAdministratoinShellDescriptor contained no SubmodelDescriptor for Technical Data')
             }
-            const technicalDataUrl: string|null = this.repositoryServiceClient.getUrlFromEndpoints(technicalDataDescriptor.endpoints)
+            const technicalDataUrl: string|null = getUrlFromEndpoints(technicalDataDescriptor.endpoints)
             const technicalData: Submodel | null = (await  this.repositoryServiceClient.getSmByUrl(technicalDataUrl))
             if (!technicalData) {
                 throw new Error('Technical Data not found at the endpoint specified by its descriptor');
@@ -61,6 +61,28 @@ export class RepositoryService {
         } catch (e) {
             console.warn(e);
             return null;
+        }
+    }
+
+    async getSubmodelRefsByAasUrl( url: string | null): Promise<Array<Reference> | null> {
+        const headers: Record<string, string> = {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        }
+        const method = 'GET'
+
+        const submodelRefUrl = new URL(`${url}/submodel-refs`);
+        
+        if(url) {
+            const response = await fetch(url, {method, headers})
+            if (response.ok) {
+                const paginatedResponse =  await response.json()
+                const smRefs = paginatedResponse.result;
+                return smRefs as Array<Reference>;
+            } else {
+                return Promise.resolve(null)}
+        } else {
+            return Promise.resolve(null)
         }
     }
 }
@@ -104,16 +126,17 @@ export class RepositoryServiceClient {
             return Promise.resolve(null)
         }
     }
+
+}
+
+export function getUrlFromEndpoints(endpoints: Array<Endpoint> | undefined): string | null{
     
-    getUrlFromEndpoints(endpoints: Array<Endpoint> | undefined): string | null{
-    
-        if(endpoints && endpoints.length) {
-            const href = endpoints[0].protocolInformation.href
-            if(href){
-                const url = href.startsWith('http')?href:('https://'+href)
-                return url
-            }
-        } 
-        throw new Error('No endpoints found')
-    }
+    if(endpoints && endpoints.length) {
+        const href = endpoints[0].protocolInformation.href
+        if(href){
+            const url = href.startsWith('http')?href:('https://'+href)
+            return url
+        }
+    } 
+    throw new Error('No endpoints found')
 }
