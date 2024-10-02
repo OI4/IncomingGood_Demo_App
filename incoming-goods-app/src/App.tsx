@@ -117,13 +117,13 @@ function App() {
                             disabled={!assetId}
                             variant="contained">Load</Button>
                     </Box>
-                    <Box mt={5}>
+                    <Box mt={5} minHeight="200px">
                         {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
                         {isLoading && <CircularProgress/>}
                         {(!isLoading && aas) && <AasViewer aasData={aas}></AasViewer>}
                     </Box>
                 </Box>
-                <Box mt={5}>
+                <Box mt={5} mb={5}>
                     <Footer/>
                 </Box>
             </div>
