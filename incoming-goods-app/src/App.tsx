@@ -3,6 +3,8 @@ import './App.css';
 import { AasViewer } from './AasViewer';
 import { Box, Button, CircularProgress, createTheme, TextField, ThemeProvider } from '@mui/material';
 import { DiscoveryService } from './Services/DiscoveryService';
+import { AasRegistry } from './Services/AasRegistry';
+
 import logo from './OI4Logo.png'
 import { Footer } from './Footer';
 import { AASAndSubmodels } from './interfaces';
@@ -15,6 +17,18 @@ function App() {
     async function loadAsset() {
         const discoveryService = DiscoveryService.create("https://oi4-sps24-mnestix-api.azurewebsites.net/discovery");
         const aasId = await discoveryService.getAasIdFromDiscovery(assetId);
+
+        if (!aasId || aasId.length <= 0) {
+            throw new Error("The AAS ID list from AAS Discovery is empty");
+        }
+
+        const aasRegistry = AasRegistry.create("https://mnestix-basyx-aas-registry-b36325a9.azurewebsites.net");
+        const concernedAasId = aasId[0];
+        const aasDescriptor = await aasRegistry.getAasDescriptorFromRegistry(concernedAasId);
+
+        console.log("AAS Descriptor: " + JSON.stringify(aasDescriptor));
+
+
     }
 
     const theme = createTheme({
@@ -39,7 +53,7 @@ function App() {
                 <Box display="flex" flexDirection="row">
                     <Box mr={2}>
                         <TextField id="assetIdInput" label="Asset ID" variant="outlined"
-                                   onChange={(e) => setAssetId(e.target.value)}/>
+                            onChange={(e) => setAssetId(e.target.value)} />
                     </Box>
                     <Button
                         className="button"
