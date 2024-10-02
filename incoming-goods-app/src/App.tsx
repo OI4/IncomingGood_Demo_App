@@ -93,7 +93,7 @@ function App() {
                         {(!isLoading && aas) && <AasViewer aasData={aas}></AasViewer>}
                     </Box>
                 </Box>
-                <Box mt={5}>
+                <Box mt={5} mb={5}>
                     <Footer/>
                 </Box>
             </div>
