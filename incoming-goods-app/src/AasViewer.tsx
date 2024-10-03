@@ -33,7 +33,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
         console.log("save")
     }
 
-    const colors = ["Red", "Black", "White", "Green", "Blue"]
+    const colors = ["Black", "Blue", "Green", "Red", "White"]
 
     return (
         <Card>
