@@ -12,8 +12,8 @@ export class BackendService {
             discovery: 'https://designer.aas-suite.de/api',
             aasRegistry: 'https://designer.aas-suite.de/api',
             smRegistry: 'https://designer.aas-suite.de/api',
-            apiKey: '9b8e3e05-a22a-4130-a60a-c4cc146495cc'
-        }
+            apiKey: 'a1c8ee8a-ae24-4094-8baf-bc1a2891b8d8'
+        },
     ]
     currentBackend = this.availableBackends[0];
     
