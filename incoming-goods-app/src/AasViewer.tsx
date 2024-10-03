@@ -1,21 +1,27 @@
-import { Box, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Alert, Box, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import React, { useState } from 'react';
 import { AASAndSubmodels } from './interfaces';
 import { BackendService } from "./Services/BackendService";
 import { RepositoryServiceClient } from './Services/RepositorySerivice';
 
 export function AasViewer(props: { aasData: AASAndSubmodels, backendService: BackendService} ): JSX.Element {
+    const technicalDataShortId = 'TechnicalProperties';
+
     const [color, setColor] = useState(getTechnicalProperty("color"))
     const [weight, setWeight] = useState(Number(getTechnicalProperty("weight")))
     const [material, setMaterial] = useState(getTechnicalProperty("material"))
+    const [errorMessage, setErrorMessage] = useState("")
+    const [successMessage, setSuccessMessage] = useState("")
+
     const repositoryClient = new RepositoryServiceClient(props.backendService);
 
     const technicalDataEndpoint = props?.aasData?.technicalData?.url ?? '';
-    const technicalDataShortId = 'TechnicalProperties';
     
     function getTechnicalProperty(name: string) {
-        const technicalData = (props.aasData.technicalData?.submodel?.submodelElements?.find( (x: any) => x.idShort === "TechnicalProperties") as any)?.[0]
-        return technicalData?.find((x: any) => x.idShort === name)?.value as string ?? ''
+        const sme = props.aasData.technicalData?.submodel?.submodelElements;
+        const technicalData = sme?.find( (x: any) => x.idShort.trim().toLowerCase() === technicalDataShortId.toLowerCase()) as any;
+        const x = technicalData?.value.find((x: any) => x.idShort === name)?.value as string ?? ''
+        return x;
     }
 
     function getNameplateProperty(name: string) {
@@ -26,14 +32,34 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
     
     async function saveAas(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        setErrorMessage("");
+        setSuccessMessage("");
+        let hasError = false;
 
-        await repositoryClient.updateSubmodelElement(repositoryEndpoint, technicalDataShortId + '.color', color);
-        await repositoryClient.updateSubmodelElement(repositoryEndpoint, technicalDataShortId + '.weight', weight);
-        await repositoryClient.updateSubmodelElement(repositoryEndpoint, technicalDataShortId + '.material', material);
-
+        try {
             await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.color', color);
+        } catch (error) {
+            console.error(error);
+            setErrorMessage("Could not save the color");
+            hasError = true;
+        }
+        try {
             await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.weight', weight);
+        } catch (error) {
+            console.error(error);
+            setErrorMessage("Could not save the weight");
+            hasError = true;
+        }
+        try {
             await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.material', material);
+        } catch (error) {
+            console.error(error);
+            setErrorMessage("Could not save the material");
+            hasError = true;
+        }
+        if (!hasError) {
+            setSuccessMessage("Successfully saved the properties");
+        }
     }
 
     const colors = ["Black", "Blue", "Green", "Red", "White"]
@@ -80,6 +106,12 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
                                 <TextField label="Material" value={material} onChange={(e) => setMaterial(e.target.value)}></TextField>
                             </Box>
                             <Button variant="contained" type="submit" className="button">Save</Button>
+                            {errorMessage && <Box mt={5}>
+                                <Alert severity="warning">{errorMessage}</Alert>
+                            </Box>}
+                            {successMessage && <Box mt={5}>
+                                <Alert severity="success">{successMessage}</Alert>
+                            </Box>}
                         </form>
                     </Box>
                 </Box>
