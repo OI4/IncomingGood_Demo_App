@@ -1,23 +1,29 @@
 import {
+    AssetAdministrationShell,
+    Reference,
+    Submodel,
+} from "@aas-core-works/aas-core3.0-typescript/types";
+import {
     AASAndSubmodels,
     AssetAdministrationShellDescriptor,
     Endpoint,
     SubmodelDescriptor,
 } from "../interfaces";
-import {
-    AssetAdministrationShell,
-    Submodel,
-    Reference,
-} from "@aas-core-works/aas-core3.0-typescript/types";
+import { BackendService } from "./BackendService";
 
 export class RepositoryService {
-    private constructor(
-        protected readonly repositoryServiceClient: RepositoryServiceClient
-    ) { }
+    private readonly backendService: BackendService;
 
-    static create(): RepositoryService {
-        const repositoryServiceClient = new RepositoryServiceClient();
-        return new RepositoryService(repositoryServiceClient);
+    constructor(
+        protected readonly repositoryServiceClient: RepositoryServiceClient,
+        protected _backendService: BackendService,
+    ) {
+        this.backendService = _backendService;
+    }
+
+    static create(backendService: BackendService): RepositoryService {
+        const repositoryServiceClient = new RepositoryServiceClient(backendService);
+        return new RepositoryService(repositoryServiceClient, backendService);
     }
 
     async getAasandSubomdelsFromRepository(
@@ -107,9 +113,18 @@ export class RepositoryService {
     }
 
     async getSubmodelRefsByAasUrl(url: string | null): Promise<Array<Reference> | null> {
-        const headers: Record<string, string> = {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
+        let headers;
+        if (this.backendService.currentBackend.apiKey) {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey
+            };
+        } else {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            };
         }
         const method = 'GET'
 
@@ -131,12 +146,29 @@ export class RepositoryService {
 }
 
 export class RepositoryServiceClient {
+    private readonly backendService: BackendService;
+
+    constructor(
+        protected _backendService: BackendService) {
+        this.backendService = _backendService;
+    }
+
     async getAasByUrl(
         url: string | null
     ): Promise<AssetAdministrationShell | null> {
-        const headers: Record<string, string> = {
-            Accept: "application/json",
-        };
+        let headers;
+        if (this.backendService.currentBackend.apiKey) {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey
+            };
+        } else {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            };
+        }
         const method = "GET";
         try {
             if (url) {
@@ -157,10 +189,19 @@ export class RepositoryServiceClient {
     }
 
     async getAasThumbnailByAasUrl(aasUrl: string): Promise<string | null> {
-        const headers: Record<string, string> = {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-        };
+        let headers;
+        if (this.backendService.currentBackend.apiKey) {
+            headers = {
+                Accept: '*/*',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey
+            };
+        } else {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            };
+        }
         const method = "GET";
         try {
             if (aasUrl) {
@@ -185,9 +226,19 @@ export class RepositoryServiceClient {
     }
 
     async getSmByUrl(url: string | null): Promise<Submodel | null> {
-        const headers: Record<string, string> = {
-            Accept: "application/json",
-        };
+        let headers;
+        if (this.backendService.currentBackend.apiKey) {
+            headers = {
+                Accept: '*/*',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey
+            };
+        } else {
+            headers = {
+                Accept: '*/*',
+                'Content-Type': 'application/json'
+            };
+        }
         const method = "GET";
         try {
             if (url) {
@@ -205,32 +256,40 @@ export class RepositoryServiceClient {
             console.warn("failed to catch submodel " + e);
             return Promise.resolve(null);
         }
-  }
-
-  async updateSubmodelElement(repositoryEndpoint: string, idShortPath: string, inputValue: string | number) {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'ApiKey': 'A5Z2w$@S%>0M',
-      'Accept': '*/*'
     }
-    const method = 'PATCH'
 
-    return fetch(repositoryEndpoint + '/submodel-elements/' + idShortPath + '/$value', {
-      method,
-      headers,
-      body: JSON.stringify(String(inputValue))
-    })
-  }
+    async updateSubmodelElement(repositoryEndpoint: string, idShortPath: string, inputValue: string | number): Promise<Response> {
+        let headers;
+        if (this.backendService.currentBackend.apiKey) {
+            headers = {
+                Accept: '*/*',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey
+            };
+        } else {
+            headers = {
+                Accept: '*/*',
+                'Content-Type': 'application/json'
+            };
+        }
+        const method = 'PATCH'
+
+        return fetch(repositoryEndpoint + '/submodel-elements/' + idShortPath + '/$value', {
+        method,
+        headers,
+        body: JSON.stringify(String(inputValue))
+        })
+    }
 }
 
 export function getUrlFromEndpoints(endpoints: Array<Endpoint> | undefined): string | null {
-    if (endpoints && endpoints.length) {
-      const href = endpoints[0].protocolInformation.href;
-      if (href) {
+    if (endpoints?.length) {
+        const href = endpoints[0].protocolInformation.href;
+        if (href) {
         const url = href.startsWith("http") ? href : "https://" + href;
         return url;
-      }
+        }
     }
     console.warn("No endpoints found");
     return null;
-  }
+}

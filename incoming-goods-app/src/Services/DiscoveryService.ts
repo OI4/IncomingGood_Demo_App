@@ -1,12 +1,13 @@
 ﻿import { Buffer } from 'buffer';
+import { BackendService } from './BackendService';
 
 export class DiscoveryService {
     private constructor(
         protected readonly discoveryServiceClient: DiscoveryServiceClient) {
     }
 
-    static create(_baseUrl: string = ''): DiscoveryService {
-    const discoveryServiceClient = new DiscoveryServiceClient(_baseUrl);
+    static create(backendService: BackendService): DiscoveryService {
+    const discoveryServiceClient = new DiscoveryServiceClient(backendService);
     return new DiscoveryService(discoveryServiceClient);
     }
     
@@ -30,11 +31,11 @@ export class DiscoveryService {
 }
 
 export class DiscoveryServiceClient {
-    private readonly baseUrl: string;
+    private readonly backendService: BackendService;
 
     constructor(
-        protected _baseUrl: string = '') {
-        this.baseUrl = _baseUrl;
+        protected _backendService: BackendService) {
+        this.backendService = _backendService;
     }
 
     async getAasIdsByAssetId(assetId: string) {
@@ -49,12 +50,21 @@ export class DiscoveryServiceClient {
     async getAllAssetAdministrationShellIdsByAssetLink(
         assetIds: { name: string; value: string }[]
     ): Promise<{ paging_metadata: string; result: string[] }> {
-        const headers = {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        };
+        let headers;
+        if (this.backendService.currentBackend.apiKey) {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey
+            };
+        } else {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            };
+        }
 
-        const url = new URL(`${this.baseUrl}/lookup/shells`);
+        const url = new URL(`${this.backendService.currentBackend.discovery}/lookup/shells`);
 
         assetIds.forEach((obj) => {
             url.searchParams.append('assetIds', encodeBase64(JSON.stringify(obj)));

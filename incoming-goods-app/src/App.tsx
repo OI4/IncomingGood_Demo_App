@@ -1,34 +1,37 @@
-import React, { useState } from 'react';
-import './App.css';
-import { AasViewer } from './AasViewer';
 import { Alert, Box, Button, CircularProgress, createTheme, TextField, ThemeProvider } from '@mui/material';
-import { DiscoveryService } from './Services/DiscoveryService';
+import { useState } from 'react';
+import { AasViewer } from './AasViewer';
+import './App.css';
 import { AasRegistry } from './Services/AasRegistry';
+import { DiscoveryService } from './Services/DiscoveryService';
 import { getUrlFromEndpoints, RepositoryService } from './Services/RepositorySerivice';
 
-import logo from './OI4Logo.png'
 import { Footer } from './Footer';
 import { AASAndSubmodels, SubmodelDescriptor } from './interfaces';
+import logo from './OI4Logo.png';
+import { BackendService } from './Services/BackendService';
 import { SubmodelRegistry } from './Services/SubmodelRegistry';
 
-function App() {
+function App(props: {backendService: BackendService}) {
     const [assetId, setAssetId] = useState("")
     const [aas, setAas] = useState<AASAndSubmodels>()
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
 
+
     async function loadAsset() {
         setErrorMessage("")
         setIsLoading(true)
+        setAas(undefined)
         try {
-            const discoveryService = DiscoveryService.create("https://oi4-sps24-mnestix-api.azurewebsites.net/discovery");
+            const discoveryService = DiscoveryService.create(props.backendService);
             const aasId = await discoveryService.getAasIdFromDiscovery(assetId);
 
             if (!aasId || aasId.length <= 0) {
                 throw new Error("The AAS ID list from AAS Discovery is empty");
             }
 
-            const aasRegistry = AasRegistry.create("https://mnestix-basyx-aas-registry-b36325a9.azurewebsites.net");
+            const aasRegistry = AasRegistry.create(props.backendService);
             const concernedAasId = aasId[0];
             const aasDescriptor = await aasRegistry.getAasDescriptorFromRegistry(concernedAasId);
 
@@ -36,7 +39,7 @@ function App() {
                 throw new Error("AAS descriptor was not found");
             }
 
-            const repositoryService = RepositoryService.create()
+            const repositoryService = RepositoryService.create(props.backendService)
 
             const url = getUrlFromEndpoints(aasDescriptor.endpoints);
 
@@ -52,7 +55,7 @@ function App() {
                 throw new Error("no SM was not found for the AAS");
             }
 
-            const smRegistry = SubmodelRegistry.create("https://mnestix-basyx-submodel-registry-b36325a9.azurewebsites.net");
+            const smRegistry = SubmodelRegistry.create(props.backendService);
 
             const smDescriptors = (await Promise.all(smIds?.map(smId => {
                 const smDescriptor = smRegistry.getSmDescriptorFromRegistry(smId)
@@ -68,8 +71,8 @@ function App() {
 
             const aasAndShells = await repositoryService.getAasandSubomdelsFromRepository(aasDescriptor, smDescriptors)
             if (aasAndShells) {
-              console.log('aasAndShells')
-              console.log(aasAndShells)
+                console.log('aasAndShells')
+                console.log(aasAndShells)
                 setAas(aasAndShells)
                 setIsLoading(false)
             }
@@ -77,7 +80,7 @@ function App() {
             console.log("Error while loading the AAS " + error)
             setErrorMessage("Error while loading the AAS")
             setIsLoading(false)
-        }        
+        }
 
     }
 
@@ -96,21 +99,21 @@ function App() {
         <ThemeProvider theme={theme}>
             <div className="App">
                 <Box mt={5} >
-                    <img width="300px" src={logo}/>
+                    <img width="300px" src={logo} alt='oi40-logo'/>
                 </Box>
                 <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" mt={5}>
                     <h3>Search for your Asset</h3>
                     <Box display="flex" flexDirection="row" minWidth="600px">
                         <Box mr={2} width="100%">
                             <TextField id="assetIdInput" label="Asset ID" variant="outlined" className="searchInput"
-                                       fullWidth={true}
-                                       onChange={(e) => setAssetId(e.target.value)}
-                                       onKeyDown={(ev) => {
-                                           if (ev.key === 'Enter') {
-                                               loadAsset()
-                                           }
-                                       }
-                                       }/>
+                                fullWidth={true}
+                                onChange={(e) => setAssetId(e.target.value)}
+                                onKeyDown={(ev) => {
+                                    if (ev.key === 'Enter') {
+                                        loadAsset()
+                                    }
+                                }
+                            }/>
                         </Box>
                         <Button
                             className="button"
@@ -123,11 +126,11 @@ function App() {
                     <Box mt={5} minHeight="200px">
                         {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
                         {isLoading && <CircularProgress/>}
-                        {(!isLoading && aas) && <AasViewer aasData={aas}></AasViewer>}
+                        {(!isLoading && aas) && <AasViewer aasData={aas} backendService={props.backendService}></AasViewer>}
                     </Box>
                 </Box>
                 <Box mt={5} mb={5}>
-                    <Footer/>
+                    <Footer backendService={props.backendService}/>
                 </Box>
             </div>
         </ThemeProvider>

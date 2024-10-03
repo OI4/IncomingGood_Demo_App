@@ -1,13 +1,14 @@
 ﻿import { Buffer } from 'buffer';
 import { AssetAdministrationShellDescriptor } from '../interfaces';
+import { BackendService } from './BackendService';
 
 export class AasRegistry {
     private constructor(
         protected readonly aasRegistryClient: AasRegistryClient) {
     }
 
-    static create(_baseUrl: string = ''): AasRegistry {
-    const aasRegistryClient = new AasRegistryClient(_baseUrl);
+    static create(backendService: BackendService): AasRegistry {
+    const aasRegistryClient = new AasRegistryClient(backendService);
     return new AasRegistry(aasRegistryClient);
     }
     
@@ -28,11 +29,11 @@ export class AasRegistry {
 }
 
 export class AasRegistryClient {
-    private readonly baseUrl: string;
+    private readonly backendService: BackendService;
 
     constructor(
-        protected _baseUrl: string = '') {
-        this.baseUrl = _baseUrl;
+        protected _backendService: BackendService) {
+        this.backendService = _backendService;
     }
 
     async getAasDescriptorByAasId(aasId: string) {
@@ -43,10 +44,15 @@ export class AasRegistryClient {
         aasId: string
     ): Promise<AssetAdministrationShellDescriptor> {
 
-        const url = new URL(`${this.baseUrl}/shell-descriptors/${encodeBase64(aasId)}`);
+        const url = new URL(`${this.backendService.currentBackend.aasRegistry}/shell-descriptors/${encodeBase64(aasId)}`);
 
         const response = await fetch(url.toString(), {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey ?? ''
+            }
         });
 
         if (response.ok) {

@@ -1,13 +1,14 @@
 import { Box, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import React, { useState } from 'react';
 import { AASAndSubmodels } from './interfaces';
+import { BackendService } from "./Services/BackendService";
 import { RepositoryServiceClient } from './Services/RepositorySerivice';
 
-export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
+export function AasViewer(props: { aasData: AASAndSubmodels, backendService: BackendService} ): JSX.Element {
     const [color, setColor] = useState(getTechnicalProperty("color"))
     const [weight, setWeight] = useState(Number(getTechnicalProperty("weight")))
     const [material, setMaterial] = useState(getTechnicalProperty("material"))
-    const repositoryClient = new RepositoryServiceClient();
+    const repositoryClient = new RepositoryServiceClient(props.backendService);
 
     const repositoryEndpoint = props?.aasData?.assetAdministrationShell?.url ?? '';
     const technicalDataShortId = 'TechnicalProperties';
@@ -20,7 +21,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
     function getNameplateProperty(name: string) {
         const nameplateData = (props.aasData.nameplate?.submodel?.submodelElements as any)
         const mlp = nameplateData?.find((x: any) => x.idShort === name)?.value
-        return mlp[0].text;
+        return mlp?.[0].text;
     }
     
     async function saveAas(event: React.FormEvent<HTMLFormElement>) {
@@ -71,7 +72,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels }): JSX.Element {
                             </Box>
                             <Box mb={2}>
                                 <TextField label="Weight" type="number" value={weight}
-                                           onChange={(e) => setWeight(Number(e.target.value))}></TextField>
+                                    onChange={(e) => setWeight(Number(e.target.value))}></TextField>
                             </Box>
                             <Box mb={2}>
                                 <TextField label="Material" value={material} onChange={(e) => setMaterial(e.target.value)}></TextField>

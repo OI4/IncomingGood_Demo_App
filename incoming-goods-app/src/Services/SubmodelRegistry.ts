@@ -1,13 +1,14 @@
 ﻿import { Buffer } from 'buffer';
 import { SubmodelDescriptor } from '../interfaces';
+import { BackendService } from './BackendService';
 
 export class SubmodelRegistry {
     private constructor(
         protected readonly smRegistryClient: SubmodelRegistryClient) {
     }
 
-    static create(_baseUrl: string = ''): SubmodelRegistry {
-    const smRegistryClient = new SubmodelRegistryClient(_baseUrl);
+    static create(backendService: BackendService): SubmodelRegistry {
+    const smRegistryClient = new SubmodelRegistryClient(backendService);
     return new SubmodelRegistry(smRegistryClient);
     }
     
@@ -28,11 +29,11 @@ export class SubmodelRegistry {
 }
 
 export class SubmodelRegistryClient {
-    private readonly baseUrl: string;
+    private readonly backendService: BackendService;
 
     constructor(
-        protected _baseUrl: string = '') {
-        this.baseUrl = _baseUrl;
+        protected _backendService: BackendService) {
+        this.backendService = _backendService;
     }
 
     async getSmDescriptorByAasId(smId: string) {
@@ -43,10 +44,25 @@ export class SubmodelRegistryClient {
         smId: string
     ): Promise<SubmodelDescriptor> {
 
-        const url = new URL(`${this.baseUrl}/submodel-descriptors/${encodeBase64(smId)}`);
+        const url = new URL(`${this.backendService.currentBackend.smRegistry}/submodel-descriptors/${encodeBase64(smId)}`);
+
+        let headers;
+        if (this.backendService.currentBackend.apiKey) {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Apikey': this.backendService.currentBackend.apiKey
+            };
+        } else {
+            headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            };
+        }
 
         const response = await fetch(url.toString(), {
-            method: 'GET'
+            method: 'GET',
+            headers
         });
 
         if (response.ok) {
