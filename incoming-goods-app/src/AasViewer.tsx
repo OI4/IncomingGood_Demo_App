@@ -10,7 +10,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
     const [material, setMaterial] = useState(getTechnicalProperty("material"))
     const repositoryClient = new RepositoryServiceClient(props.backendService);
 
-    const repositoryEndpoint = props?.aasData?.assetAdministrationShell?.url ?? '';
+    const technicalDataEndpoint = props?.aasData?.technicalData?.url ?? '';
     const technicalDataShortId = 'TechnicalProperties';
     
     function getTechnicalProperty(name: string) {
@@ -31,7 +31,9 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
         await repositoryClient.updateSubmodelElement(repositoryEndpoint, technicalDataShortId + '.weight', weight);
         await repositoryClient.updateSubmodelElement(repositoryEndpoint, technicalDataShortId + '.material', material);
 
-        console.log("save")
+            await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.color', color);
+            await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.weight', weight);
+            await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.material', material);
     }
 
     const colors = ["Black", "Blue", "Green", "Red", "White"]
