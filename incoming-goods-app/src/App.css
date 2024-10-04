@@ -41,10 +41,13 @@
   color: white !important;
 }
 
-.thumbnail{
-  max-height: 200px;
+.thumbnail {
+  object-fit: contain;
+  width: 100%;
+  height: 250px;
 }
+  
 
-.searchInput{
+.searchInput {
   min-width: 400px;
 }
