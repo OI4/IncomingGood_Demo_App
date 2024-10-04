@@ -9,8 +9,8 @@ export function Footer (props: {backendService: BackendService }) {
         return (
         <Box display="flex" justifyContent="space-between" ml={10} mr={10} gap={3}>
             <img src={murr} width="150px" alt="murr-logo"/>
-            <img src={metalevel} width="200px" onClick={() => props.backendService.setCurrentBackend('metalevel')} alt="ml-logo"/>
-            <img src={xitaso} width="200px" onClick={() => props.backendService.setCurrentBackend('xitaso')} alt="xitaso-Logo"/>
+            <img src={metalevel} width="200px" onClick={() => props.backendService.setCurrentBackend('metalevel')} alt="ml-logo" style={{cursor: 'pointer'}}/>
+            <img src={xitaso} width="200px" onClick={() => props.backendService.setCurrentBackend('xitaso')} alt="xitaso-Logo" style={{cursor: 'pointer'}}/>
             <img src={endress} width="200px" alt="eh-logo"/>
             <img src={iese} width="200px" alt="ieseLogo"/>
         </Box>)
