@@ -1,4 +1,14 @@
-import { Alert, Box, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+    Alert,
+    Box,
+    Button,
+    Card, Divider,
+    FormControl, Grid2,
+    InputLabel,
+    MenuItem,
+    Select,
+    Typography
+} from "@mui/material";
 import React, { useState } from 'react';
 import { AASAndSubmodels } from './interfaces';
 import { BackendService } from "./Services/BackendService";
@@ -7,9 +17,7 @@ import { RepositoryServiceClient } from './Services/RepositorySerivice';
 export function AasViewer(props: { aasData: AASAndSubmodels, backendService: BackendService} ): JSX.Element {
     const technicalDataShortId = 'TechnicalProperties';
 
-    const [color, setColor] = useState(getTechnicalProperty("color"))
-    const [weight, setWeight] = useState(Number(getTechnicalProperty("weight")))
-    const [material, setMaterial] = useState(getTechnicalProperty("material"))
+    const [location, setLocation] = useState(getTechnicalProperty("location"))
     const [errorMessage, setErrorMessage] = useState("")
     const [successMessage, setSuccessMessage] = useState("")
 
@@ -37,24 +45,10 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
         let hasError = false;
 
         try {
-            await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.color', color);
+            await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.location', location);
         } catch (error) {
             console.error(error);
-            setErrorMessage("Could not save the color");
-            hasError = true;
-        }
-        try {
-            await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.weight', weight);
-        } catch (error) {
-            console.error(error);
-            setErrorMessage("Could not save the weight");
-            hasError = true;
-        }
-        try {
-            await repositoryClient.updateSubmodelElement(technicalDataEndpoint, technicalDataShortId + '.material', material);
-        } catch (error) {
-            console.error(error);
-            setErrorMessage("Could not save the material");
+            setErrorMessage("Could not save the location");
             hasError = true;
         }
         if (!hasError) {
@@ -62,50 +56,64 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
         }
     }
 
-    const colors = ["Black", "Blue", "Green", "Red", "White"]
+    const locations = ["Location 1", "Location 2", "Location 3", "Location 4", "Location 5"]
 
     return (
         <Card>
             <Box display="flex" padding={5}>
                 <Box width="250px" height="100px" mr={5}>
                     {props.aasData.assetAdministrationShell?.thumbnail && <img className="thumbnail" src={props.aasData.assetAdministrationShell?.thumbnail}/>}
-                <Box display="flex" flexDirection="column">
-                    {props.aasData.assetAdministrationShell?.shell?.assetInformation?.specificAssetIds && <p>Specific Asset IDs</p>}
-                    {props.aasData.assetAdministrationShell?.shell?.assetInformation?.specificAssetIds?.map(id => {
-                        return <h4>{id.name} : {id.value}</h4>
-                    })}
-                </Box>
                 </Box>
                 <Box display="flex" flexDirection="column" alignItems="flex-start">
-                    <h4>Supplier: {getNameplateProperty('ManufacturerName')}</h4>
-                    <h4>Asset: {getNameplateProperty('ManufacturerProductDesignation')}</h4>
-                    <Box display="flex" flexDirection="column">
+                    <Box mb={2} display="flex" flexDirection="row" justifyContent="flex-start">
+                        <Typography variant="h4" >{getNameplateProperty('ManufacturerProductDesignation')}</Typography>
+                    </Box>
+                    <Box display="flex" flexDirection="column" width="100%">
+                        <Divider sx={{mb: 2, mt: 2}}/>
+                        <Typography sx={{mt: 1, mb: 1}} fontWeight="bold">Nameplate Data</Typography>
+                        <Box mb={2} display="flex" flexDirection="row" justifyContent="flex-start">
+                            <Typography width={150} textAlign="start">Manufacturer</Typography>
+                            <Typography>{getNameplateProperty('ManufacturerName')}</Typography>
+                        </Box>
+
+                        <Divider sx={{mb: 2, mt: 2}}/>
+                        <Typography sx={{mt: 1, mb: 1}} fontWeight="bold">Technical Data</Typography>
+                        <Box mb={2} display="flex" flexDirection="row" justifyContent="flex-start">
+                            <Typography width={150} textAlign="start">Weight</Typography>
+                            <Typography>{Number(getTechnicalProperty("weight"))} kg</Typography>
+                        </Box>
+                        <Box mb={2} display="flex" flexDirection="row">
+                            <Typography width={150} textAlign="start">Material</Typography>
+                            <Typography>{getTechnicalProperty("material")}</Typography>
+                        </Box>
+                        <Box mb={2} display="flex" flexDirection="row">
+                            <Typography width={150} textAlign="start">Color</Typography>
+                            <Typography>{getTechnicalProperty("color")}</Typography>
+                        </Box>
+                        
                         <form onSubmit={(event) => {
                             saveAas(event)
                         }}>
-                            <Box mb={2}>
+                            <Divider sx={{mb: 2, mt: 2}}/>
+                            <Typography sx={{mt: 1, mb: 1}} fontWeight="bold">Set new Location:</Typography>
+                            <Box mb={2} minWidth="250px">
                                 <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Color</InputLabel>
+                                    <InputLabel id="demo-simple-select-label">Location</InputLabel>
                                     <Select
                                         id="demo-simple-select"
-                                        value={color}
-                                        label="Color"
-                                        onChange={(e) => setColor(e.target.value)}
+                                        value={location}
+                                        label="Location"
+                                        onChange={(e) => setLocation(e.target.value)}
                                     >
-                                        {colors.map(color => {
-                                            return <MenuItem value={color}>{color}</MenuItem>
+                                        {locations.map(location => {
+                                            return <MenuItem value={location} key={location}>{location}</MenuItem>
                                         })}
                                     </Select>
                                 </FormControl>
                             </Box>
-                            <Box mb={2}>
-                                <TextField label="Weight" type="number" value={weight}
-                                    onChange={(e) => setWeight(Number(e.target.value))}></TextField>
+                            <Box mt={4} display="flex" justifyContent="flex-end">
+                                <Button variant="contained" type="submit" className="button">Save</Button>
                             </Box>
-                            <Box mb={2}>
-                                <TextField label="Material" value={material} onChange={(e) => setMaterial(e.target.value)}></TextField>
-                            </Box>
-                            <Button variant="contained" type="submit" className="button">Save</Button>
                             {errorMessage && <Box mt={5}>
                                 <Alert severity="warning">{errorMessage}</Alert>
                             </Box>}
