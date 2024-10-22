@@ -56,7 +56,11 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
         }
     }
 
-    const locations = ["Location 1", "Location 2", "Location 3", "Location 4", "Location 5"]
+    const locations = [
+        "Shelf A, Bin 07, Component Storage Area",
+        "Shelf A, Bin 96, Component Storage Area",
+        "Shelf C, Bin 13, Component Storage Area",
+        "Quality Control Holding Area"]
 
     return (
         <Card>
@@ -96,7 +100,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
                         }}>
                             <Divider sx={{mb: 2, mt: 2}}/>
                             <Typography sx={{mt: 1, mb: 1}} fontWeight="bold">Set new Location:</Typography>
-                            <Box mb={2} minWidth="250px">
+                            <Box mb={2} minWidth="350px">
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Location</InputLabel>
                                     <Select
@@ -112,7 +116,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
                                 </FormControl>
                             </Box>
                             <Box mt={4} display="flex" justifyContent="flex-end">
-                                <Button variant="contained" type="submit" className="button">Save</Button>
+                                <Button variant="contained" type="submit" className="button" size="large">Save</Button>
                             </Box>
                             {errorMessage && <Box mt={5}>
                                 <Alert severity="warning">{errorMessage}</Alert>
