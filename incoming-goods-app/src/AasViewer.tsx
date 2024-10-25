@@ -3,7 +3,7 @@ import {
     Box,
     Button,
     Card, Divider,
-    FormControl, Grid2,
+    FormControl,
     InputLabel,
     MenuItem,
     Select,
@@ -84,7 +84,7 @@ export function AasViewer(props: { aasData: AASAndSubmodels, backendService: Bac
                         <Typography sx={{mt: 1, mb: 1}} fontWeight="bold">Technical Data</Typography>
                         <Box mb={2} display="flex" flexDirection="row" justifyContent="flex-start">
                             <Typography width={150} textAlign="start">Weight</Typography>
-                            <Typography>{Number(getTechnicalProperty("weight"))} kg</Typography>
+                            <Typography>{Number(getTechnicalProperty("weight"))} g</Typography>
                         </Box>
                         <Box mb={2} display="flex" flexDirection="row">
                             <Typography width={150} textAlign="start">Material</Typography>
