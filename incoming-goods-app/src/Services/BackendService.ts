@@ -9,10 +9,10 @@ export class BackendService {
         },
         {
             name: 'metalevel',
-            discovery: 'https://designer.aas-suite.de/api',
-            aasRegistry: 'https://designer.aas-suite.de/api',
-            smRegistry: 'https://designer.aas-suite.de/api',
-            apiKey: 'a1c8ee8a-ae24-4094-8baf-bc1a2891b8d8'
+            discovery: 'https://designer-demo.meta-level.de/aas-proxy/discovery',
+            aasRegistry: 'https://designer-demo.meta-level.de/aas-proxy/aas-registry',
+            smRegistry: 'https://designer-demo.meta-level.de/aas-proxy/sm-registry',
+            apiKey: '30fe2781-3f2c-4e45-a2aa-0d7720f35909'
         },
     ]
     currentBackend = this.availableBackends[0];
