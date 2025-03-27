@@ -2,9 +2,9 @@ export class BackendService {
     private availableBackends: AvailableBackend[] = [
         {
             name: 'xitaso', 
-            discovery: 'https://oi4-sps24-mnestix-api.azurewebsites.net/discovery', 
-            aasRegistry: 'https://mnestix-basyx-aas-registry-b36325a9.azurewebsites.net',
-            smRegistry: 'https://mnestix-basyx-submodel-registry-b36325a9.azurewebsites.net',
+            discovery: 'https://mnestix-my-company-sps.azurewebsites.net/discovery',
+            aasRegistry: 'https://mnestix-basyx-aas-registry-7bb42d75.azurewebsites.net',
+            smRegistry: 'https://mnestix-basyx-submodel-registry-7bb42d75.azurewebsites.net',
             apiKey: 'A5Z2w$@S%>0M'
         },
         {

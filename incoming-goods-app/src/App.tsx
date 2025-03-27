@@ -32,7 +32,7 @@ function App(props: {backendService: BackendService}) {
             }
 
             const aasRegistry = AasRegistry.create(props.backendService);
-            const concernedAasId = aasId[0];
+            const concernedAasId = aasId.find(aasId => aasId.includes('_copy')) || aasId[0];
             const aasDescriptor = await aasRegistry.getAasDescriptorFromRegistry(concernedAasId);
 
             if (!aasDescriptor) {
